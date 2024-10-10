@@ -1,0 +1,94 @@
+{
+  "appStreamBuilderImages": [
+    {
+      "name": "LogixDesigner_V1-builder",
+      "description": "Logix Image Builder",
+      "infrastructure": {
+        "baseImage": "AWS\\AppStream-WinServer2022-06-17-2024",
+        "region": "us-east-1",
+        "iam-role": "appstream-image-builder-role",
+        "instanceType":"stream.standard.medium",
+        "vpcEndpoints": "Internet",
+        "vpc": "vpc-0b2c2a2e",
+        "subnet": "subnet-0b2c2a2e",
+        "securityGroup": "sg-0b2c2a2e",
+        "defaultInternetAccess": false
+      },
+      "applications": [
+        {
+          "name": "LogixDesigner",
+          "installerPath": "Logix.msi"
+        },
+        {
+          "name": "FactoryTalkLogixEcho",
+          "installerPath": "FactoryTalkLogixEcho.msi"
+        },
+        {
+          "name": "license-manager-client",
+          "installerPath": "licenseManager.msi"
+        }
+      ],
+      "security": {
+        "scripts": [
+          {
+            "name": "region-setup",
+            "description": "Region Setup for License Manager",
+            "path": "scripts\\RegionSetup.ps1"
+          },
+          {
+            "name": "aws-folder-block",
+            "path": "scripts\\FolderBlock.ps1"
+          }
+        ]
+      }
+    }
+  ],
+  "appStreamImages": [
+    {
+      "name": "LogixLarge",
+      "builderImage": "LogixDesigner_V1-builder",
+      "environments": [
+        {
+          "name": "sandbox",
+          "regions": ["us-east-1"],
+          "fleet": "stream-logix-fleet-large"
+        }
+      ]
+    }
+  ],
+  "fleets": [
+    {
+      "name": "stream-logix-fleet-large",
+      "type": "On-demand",
+      "iam-role": "appstream-ec2",
+      "instanceType": "stream.standard.2xlarge",
+      "stack": "stream-logix-stack-large",
+      "network": {
+        "subnets": ["subnet-0b2c2a2e"],
+        "securityGroups": ["sg-0b2c2a2e"],
+        "vpc": "vpc-0b2c2a2e"
+      }
+    }
+  ],
+  "ec2Images": [
+    {
+      "name": "license-activation-server",
+      "description": "License Activation Server Image",
+      "region": "us-east-1",
+      "applications": [
+        {
+          "name": "flexsvr",
+          "installerPath": "flexsvr.exe"
+        },
+        {
+          "name": "FTActivationBoost",
+          "installerPath": "FTAManager.exe"
+        },
+        {
+          "name": "FTActivationBoost",
+          "installerPath": "flexsvr.exe"
+        }
+      ]
+    }
+  ]
+}
