@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-appstream": "^3.666.0"
+  }
+}
